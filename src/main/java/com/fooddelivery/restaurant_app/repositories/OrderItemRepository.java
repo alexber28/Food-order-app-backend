@@ -1,0 +1,9 @@
+package com.fooddelivery.restaurant_app.repositories;
+
+import com.fooddelivery.restaurant_app.models.OrderItem;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
+
+public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
+    List<OrderItem> findByOrderId(Long orderId); // Состав конкретного заказа
+}
