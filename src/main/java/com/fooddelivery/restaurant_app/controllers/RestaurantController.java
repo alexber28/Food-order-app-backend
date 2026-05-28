@@ -102,8 +102,6 @@ public class RestaurantController {
         User manager = userRepository.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
         
-        // Ищем ресторан, где manager_id равен ID этого юзера
-        // ВАЖНО: убедись, что в RestaurantRepository есть метод findByManagerId(Long managerId);
         Restaurant restaurant = restaurantRepository.findByManagerId(manager.getId())
                 .orElseThrow(() -> new RuntimeException("У вас еще нет привязанного ресторана!"));
         

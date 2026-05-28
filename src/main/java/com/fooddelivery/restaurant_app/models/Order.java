@@ -9,7 +9,7 @@ import java.util.List;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "orders") // В PostgreSQL слово "order" зарезервировано системой, поэтому всегда пишем во множественном числе!
+@Table(name = "orders")
 @Data
 public class Order {
 
@@ -21,12 +21,12 @@ public class Order {
     private OrderStatus status = OrderStatus.CREATED;
 
     @Column(name = "wait_time")
-    private Integer waitTime; // Время ожидания в минутах
+    private Integer waitTime;
 
     @Column(name = "total_price", nullable = false)
     private BigDecimal totalPrice;
 
-    @CreationTimestamp // Магия Spring: время проставится само!
+    @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 

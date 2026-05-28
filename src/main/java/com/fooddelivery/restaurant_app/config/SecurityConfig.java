@@ -34,7 +34,6 @@ public class SecurityConfig {
         return authConfig.getAuthenticationManager();
     }
 
-    // Обрати внимание: мы добавили JwtFilter в параметры
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtFilter jwtFilter) throws Exception {
         http
@@ -52,11 +51,9 @@ public class SecurityConfig {
                 .requestMatchers("/api/dishes/**").permitAll() // Меню видят все
                 .requestMatchers("/api/orders/all", "/api/orders/*/status").hasAnyRole("ADMIN", "MANAGER")
                 .requestMatchers("/api/orders/**").authenticated() // Доступно всем залогиненным юзерам
-                // А вот корзина и заказы теперь скрыты под замком:
                 .anyRequest().authenticated() 
             );
 
-        // Вставляем наш фильтр перед стандартным фильтром Spring Security
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

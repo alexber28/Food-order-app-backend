@@ -26,7 +26,7 @@ public class AuthController {
         if (userRepository.existsByEmail(user.getEmail())) {
             return ResponseEntity.badRequest().body("Error: Email is already in use!");
         }
-        // Хешируем пароль перед сохранением!
+        // Хешируем пароль перед сохранением
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole(Role.ROLE_USER); // По умолчанию все - обычные юзеры
         userRepository.save(user);

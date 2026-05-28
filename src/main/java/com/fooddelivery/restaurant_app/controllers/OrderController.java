@@ -31,12 +31,12 @@ public class OrderController {
     @PostMapping("/create")
     public ResponseEntity<List<Order>> createOrder(@AuthenticationPrincipal UserDetails userDetails) {
         User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow();
-        // Вызываем новый метод, который сам всё сделает и вернет список заказов
+        
         List<Order> newOrders = orderService.createOrdersFromCart(user.getId());
         return ResponseEntity.ok(newOrders);
     }
 
-    // GET: Посмотреть все заказы ресторана (Для менеджера и админа)
+    // GET: Посмотреть все заказы ресторана (для менеджера и админа)
     @GetMapping("/restaurant/{restaurantId}")
     @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
     public ResponseEntity<List<Order>> getRestaurantOrders(@PathVariable Long restaurantId) {
@@ -46,15 +46,14 @@ public class OrderController {
     // Эндпоинт: GET http://localhost:8080/api/orders
     @GetMapping
     public ResponseEntity<List<Order>> getMyOrders(@AuthenticationPrincipal UserDetails userDetails) {
-        // Находим юзера по токену
+        // Нахождение пользователя по токену
         User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow();
-        // Возвращаем его заказы
+        // Возвращаем пользовательские заказы
         List<Order> orders = orderService.getUserOrders(user.getId());
         return ResponseEntity.ok(orders);
     }
 
-    // PUT: Изменить статус заказа (Для менеджера и админа)
-    // Пример: PUT http://localhost:8080/api/orders/1/status?status=APPROVED
+    // PUT http://localhost:8080/api/orders/1/status?status=APPROVED
     @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
     @PutMapping("/{id}/status-old")
     @Deprecated
@@ -66,13 +65,12 @@ public class OrderController {
         return ResponseEntity.ok(updatedOrder);
     }
 
-    // Получить вообще все заказы (для админки)
+    // Получить все заказы (для панели администратора)
     @GetMapping("/all")
     public ResponseEntity<List<Order>> getAllOrders() {
         return ResponseEntity.ok(orderRepository.findAll());
     }
 
-    // Заготовка для смены статуса менеджером
     @PutMapping("/{id}/status")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<?> updateOrderDetails(@PathVariable Long id, @RequestBody java.util.Map<String, String> body) {

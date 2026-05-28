@@ -10,17 +10,16 @@ import java.util.Date;
 @Component
 public class JwtUtils {
 
-    // Секретный ключ для подписи токенов (в реальном проекте хранится в переменных окружения!)
+    // Секретный ключ для подписи токенов
     private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    // Токен будет жить 24 часа
     private final int jwtExpirationMs = 86400000;
 
     // Генерация токена на основе email пользователя
-    // Добавили второй параметр - String role
+    // второй параметр - String role
     public String generateToken(String email, String role) {
         return Jwts.builder()
                 .setSubject(email)
-                .claim("role", role) // <--- Вот она, магия! Кладем роль прямо в токен
+                .claim("role", role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(key)

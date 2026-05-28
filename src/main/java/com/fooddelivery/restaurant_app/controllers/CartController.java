@@ -25,7 +25,7 @@ public class CartController {
 
     public record CartRequest(Long dishId, int quantity) {}
 
-    // Эндпоинт теперь: GET http://localhost:8080/api/cart (НИКАКИХ ID В ССЫЛКЕ!)
+    // Эндпоинт теперь: GET http://localhost:8080/api/cart
     @GetMapping
     public ResponseEntity<List<CartItem>> getUserCart(@AuthenticationPrincipal UserDetails userDetails) {
         User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow();

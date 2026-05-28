@@ -21,7 +21,6 @@ public class OrderService {
     private final OrderItemRepository orderItemRepository;
     private final CartItemRepository cartItemRepository;
     private final UserRepository userRepository;
-    //private final RestaurantRepository restaurantRepository;
 
     @Transactional
     public List<Order> createOrdersFromCart(Long userId) {
@@ -32,12 +31,12 @@ public class OrderService {
             throw new RuntimeException("Корзина пуста, заказ невозможен");
         }
 
-        // 1. Считаем общую (гранд) сумму всей корзины для проверки баланса
+        // Считаем общую сумму всей корзины для проверки баланса
         BigDecimal grandTotal = cart.stream()
                 .map(item -> item.getDish().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        // 2. Проверяем баланс
+        // Проверяем баланс
         if (user.getBalance().compareTo(grandTotal) < 0) {
             throw new RuntimeException("Недостаточно средств на балансе! Пополните счет.");
         }
@@ -46,14 +45,13 @@ public class OrderService {
         user.setBalance(user.getBalance().subtract(grandTotal));
         userRepository.save(user);
 
-        // 3. ГРУППИРУЕМ ТОВАРЫ ПО РЕСТОРАНАМ
-        // Получаем Map, где ключ - Ресторан, а значение - список товаров в корзине из этого ресторана
+        // Группируем товары по ресторанам: Получаем Map, где ключ - Ресторан, а значение - список товаров этого ресторана
         Map<Restaurant, List<CartItem>> itemsByRestaurant = cart.stream()
                 .collect(Collectors.groupingBy(item -> item.getDish().getRestaurant()));
 
         List<Order> createdOrders = new ArrayList<>();
 
-        // 4. Создаем отдельный заказ для каждого ресторана
+        // Создаем отдельный заказ для каждого ресторана
         for (Map.Entry<Restaurant, List<CartItem>> entry : itemsByRestaurant.entrySet()) {
             Restaurant restaurant = entry.getKey();
             List<CartItem> restaurantItems = entry.getValue();
@@ -67,7 +65,7 @@ public class OrderService {
             order.setUser(user);
             order.setRestaurant(restaurant);
             order.setStatus(OrderStatus.CREATED);
-            order.setWaitTime(0); // Ставим 0 по умолчанию. Менеджер установит реальное время позже.
+            order.setWaitTime(0);
             order.setTotalPrice(restaurantTotal);
             Order savedOrder = orderRepository.save(order);
 
@@ -85,7 +83,7 @@ public class OrderService {
             createdOrders.add(savedOrder);
         }
 
-        // 5. Очищаем корзину после успешного создания всех заказов
+        // Очищаем корзину после успешного создания всех заказов
         cartItemRepository.deleteByUserId(userId);
 
         return createdOrders;
@@ -98,7 +96,6 @@ public class OrderService {
 
     // Получение всех заказов конкретного пользователя
     public List<Order> getUserOrders(Long userId) {
-        // Убедись, что в OrderRepository есть метод findByUserId(Long userId)
         return orderRepository.findByUserId(userId); 
     }
 

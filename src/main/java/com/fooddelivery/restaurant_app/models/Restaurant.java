@@ -16,7 +16,7 @@ public class Restaurant {
     @Column(nullable = false)
     private String name;
 
-    @Column(columnDefinition = "text") // Делаем тип text, чтобы влезло длинное описание
+    @Column(columnDefinition = "text")
     private String description;
 
     @Column(name = "image_url")

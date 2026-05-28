@@ -95,22 +95,17 @@ public class UserController {
         
         try {
             // Превращаем строку из JSON в твой Enum. 
-            // Обрати внимание: если твой Enum называется как-то иначе (например, UserRole), 
-            // то напиши UserRole.valueOf(...)
             user.setRole(Role.valueOf(newRoleString));
             userRepository.save(user);
             
             return ResponseEntity.ok("Роль успешно обновлена");
         } catch (IllegalArgumentException e) {
-            // Если с фронта прислали строку, которой нет в твоем Enum (например, "HACKER")
             return ResponseEntity.badRequest().body("Недопустимая роль: " + newRoleString);
         }
     }
 
     @GetMapping("/managers")
     public ResponseEntity<List<User>> getManagers() {
-        // Предполагаю, что в твоем репозитории есть метод findByRole
-        // Если нет — добавь его в UserRepository: List<User> findByRole(Role role);
         return ResponseEntity.ok(userRepository.findByRole(Role.ROLE_MANAGER));
     }
 }
